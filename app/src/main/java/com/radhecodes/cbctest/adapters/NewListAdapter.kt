@@ -1,16 +1,13 @@
 package com.radhecodes.cbctest.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.radhecodes.cbctest.R
-import com.radhecodes.cbctest.repository.model.ApiResponseItem
+import com.radhecodes.cbctest.databinding.NewsListItemBinding
 import com.radhecodes.cbctest.repository.model.News
-import kotlinx.android.synthetic.main.news_list_item.view.*
 
 class NewListAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -33,13 +30,9 @@ class NewListAdapter() :
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
+        val binding = NewsListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NewsViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.news_list_item,
-                parent,
-                false
-            )
+          binding
         )
     }
 
@@ -59,17 +52,17 @@ class NewListAdapter() :
         differ.submitList(list)
     }
 
-    inner class NewsViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class NewsViewHolder(val binding: NewsListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: News) = with(itemView) {
 
-            itemView.news_title.text = item.getTitle()
-            itemView.new_publish_date.text = item.getPublishedTime()
+            binding.newsTitle.text = item.getTitle()
+            binding.newPublishDate.text = item.getPublishedTime()
 
             Glide.with(itemView.context)
                 .load(item.getImageUrl())
-                .into(itemView.news_thumbnail)
+                .into(binding.newsThumbnail)
         }
     }
 }
