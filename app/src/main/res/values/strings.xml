@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CBCTest</string>
     <string name="news_thumbnail">News Thumbnail</string>
+    <string name="no_network_icon">no network icon</string>
 </resources>

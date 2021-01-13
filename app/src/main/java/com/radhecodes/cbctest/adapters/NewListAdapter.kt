@@ -9,20 +9,21 @@ import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.radhecodes.cbctest.R
 import com.radhecodes.cbctest.repository.model.ApiResponseItem
+import com.radhecodes.cbctest.repository.model.News
 import kotlinx.android.synthetic.main.news_list_item.view.*
 
 class NewListAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ApiResponseItem>() {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<News>() {
 
-        override fun areItemsTheSame(oldItem: ApiResponseItem, newItem: ApiResponseItem): Boolean {
+        override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
             return oldItem.getNewsId() == newItem.getNewsId()
         }
 
         override fun areContentsTheSame(
-            oldItem: ApiResponseItem,
-            newItem: ApiResponseItem
+            oldItem: News,
+            newItem: News
         ): Boolean {
             return oldItem == newItem
         }
@@ -54,14 +55,14 @@ class NewListAdapter() :
         return differ.currentList.size
     }
 
-    fun submitList(list: List<ApiResponseItem>) {
+    fun submitList(list: List<News>?) {
         differ.submitList(list)
     }
 
     inner class NewsViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
-        fun bind(item: ApiResponseItem) = with(itemView) {
+        fun bind(item: News) = with(itemView) {
 
             itemView.news_title.text = item.getTitle()
             itemView.new_publish_date.text = item.getPublishedTime()
