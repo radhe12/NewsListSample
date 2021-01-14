@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.radhecodes.cbctest.databinding.NewsListItemBinding
 import com.radhecodes.cbctest.repository.model.News
 
-class NewListAdapter() :
+class NewsListAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<News>() {

@@ -3,7 +3,7 @@ package com.radhecodes.cbctest.repository.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class ApiResponseItem {
+class NewsItem {
     @SerializedName("description")
     @Expose
     private var description: String? = null
@@ -57,7 +57,26 @@ class ApiResponseItem {
     }
 
     override fun equals(other: Any?): Boolean {
-        return super.equals(other)
+        if(javaClass != other?.javaClass) {
+            return false
+        }
+        other as NewsItem
+        if(id != other.id) {
+            return false
+        }
+        if(title != other.title) {
+            return false
+        }
+        if(readablePublishedAt != other.readablePublishedAt) {
+            return false
+        }
+        if(images?.square_140 != other.images?.square_140) {
+            return false
+        }
+        if(type != other.type) {
+            return false
+        }
+        return true
     }
 
     fun getImageUrl(): String? {

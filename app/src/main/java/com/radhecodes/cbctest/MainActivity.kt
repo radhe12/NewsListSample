@@ -5,13 +5,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.chip.Chip
-import com.radhecodes.cbctest.adapters.NewListAdapter
+import com.radhecodes.cbctest.adapters.NewsListAdapter
 import com.radhecodes.cbctest.databinding.ActivityMainBinding
-import com.radhecodes.cbctest.repository.model.ApiResponseItem
+import com.radhecodes.cbctest.repository.model.NewsItem
 import com.radhecodes.cbctest.repository.model.News
 import com.radhecodes.cbctest.repository.model.StatusType
 import com.radhecodes.cbctest.ui.NewsViewModel
@@ -25,7 +24,7 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private val newsViewModel: NewsViewModel by viewModel()
     private lateinit var binding: ActivityMainBinding
-    lateinit var recyclerAdapter: NewListAdapter
+    lateinit var recyclerAdapter: NewsListAdapter
     private var newsList: List<News> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 binding.noNetworkTemplate.visibility = View.GONE
                 binding.chipsScroll.visibility = View.VISIBLE
                 binding.newsList.visibility = View.VISIBLE
-                val list = status.isInstanceOf<List<ApiResponseItem>>()
+                val list = status.isInstanceOf<List<NewsItem>>()
                 if (list != null) {
                     newsList = list.map {
                         News(
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private fun initList() {
         binding.newsList.apply {
           layoutManager = LinearLayoutManager(this@MainActivity)
-          recyclerAdapter = NewListAdapter()
+          recyclerAdapter = NewsListAdapter()
           val topSpacingItemDecoration = TopSpacingItemDecoration(50)
           addItemDecoration(topSpacingItemDecoration)
           adapter = recyclerAdapter
