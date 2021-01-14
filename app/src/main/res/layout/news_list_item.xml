@@ -4,6 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
     app:cardCornerRadius="2dp"
     android:background="@color/white">
 
@@ -14,10 +16,10 @@
     android:padding="12dp">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
         android:id="@+id/news_thumbnail"
-        android:layout_gravity="center"
+        android:gravity="start"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:contentDescription="@string/news_thumbnail" />
