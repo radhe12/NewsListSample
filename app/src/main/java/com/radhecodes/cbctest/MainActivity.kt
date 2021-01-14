@@ -1,8 +1,6 @@
 package com.radhecodes.cbctest
 
-import android.R
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +15,7 @@ import com.radhecodes.cbctest.repository.model.ApiResponseItem
 import com.radhecodes.cbctest.repository.model.News
 import com.radhecodes.cbctest.repository.model.StatusType
 import com.radhecodes.cbctest.ui.NewsViewModel
+import com.radhecodes.cbctest.utils.NetworkStatus
 import com.radhecodes.cbctest.utils.TopSpacingItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -28,23 +27,35 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: ActivityMainBinding
     lateinit var recyclerAdapter: NewListAdapter
     private var newsList: List<News> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.swipeToRefresh.setOnRefreshListener(this)
         binding.swipeToRefresh.setColorSchemeResources(
-            R.color.holo_purple,
-            R.color.holo_purple,
-            R.color.holo_purple
+            R.color.purple_200,
+            R.color.purple_200,
+            R.color.purple_200
         )
         initList()
-        fetchNews()
-        newsViewModel.getNewsFromLocalDb().observe(this, Observer {
+
+        if(newsList.isEmpty() && NetworkStatus.isInternetAvailable(this)) {
+            binding.chipsScroll.visibility = View.VISIBLE
+            binding.newsList.visibility = View.VISIBLE
+            binding.noNetworkTemplate.visibility = View.GONE
+            fetchNews()
+        } else {
+            binding.chipsScroll.visibility = View.GONE
+            binding.newsList.visibility = View.GONE
+            binding.noNetworkTemplate.visibility = View.VISIBLE
+        }
+        newsViewModel.getNewsFromLocalDb().observe(this, {
             if (it.isNotEmpty()) {
                 recyclerAdapter.submitList(it)
                 val types = getTypes(it)
                 if (types.isNotEmpty()) {
+                    binding.typesChip.visibility = View.VISIBLE
                     binding.typesChip.removeAllViews()
                     for (type in types) {
                         val chip = Chip(this)
@@ -57,13 +68,16 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                     binding.typesChip.setOnCheckedChangeListener { group, checkedId ->
                         val chip: Chip? = group.findViewById(checkedId)
                         chip?.let {
-                            Toast.makeText(this, chip.text, Toast.LENGTH_SHORT).show()
+                          recyclerAdapter.submitList(getNewsFromType(chip.text.toString(), newsList))
                         } ?: kotlin.run {
+                            recyclerAdapter.submitList(newsList)
                         }
                     }
+                } else {
+                    binding.typesChip.visibility = View.GONE
                 }
             } else {
-                //TODO() no data template
+                Toast.makeText(this, "No latest news available, Please try again later", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -90,8 +104,13 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 if (binding.swipeToRefresh.isRefreshing) {
                     binding.swipeToRefresh.isRefreshing = false
                 }
+            } else if(status?.status == StatusType.NETWORK_ERROR) {
+                Toast.makeText(this, "Please connect to internet to get latest news", Toast.LENGTH_LONG).show()
+                if (binding.swipeToRefresh.isRefreshing) {
+                    binding.swipeToRefresh.isRefreshing = false
+                }
             } else {
-                //TODO() error toast
+                Toast.makeText(this, "Error fetching latest news, Please try again later", Toast.LENGTH_LONG).show()
                 if (binding.swipeToRefresh.isRefreshing) {
                     binding.swipeToRefresh.isRefreshing = false
                 }
@@ -114,7 +133,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun getNewsFromType(type: String, newsList: List<News>): List<News>{
-        return newsList.filter { it.getType() == type }
+        return newsList.filter { it.getType().toUpperCase(Locale.ROOT) == type }
     }
 
     override fun onRefresh() {
