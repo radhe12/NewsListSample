@@ -2,32 +2,14 @@ package com.radhecodes.cbctest.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.radhecodes.cbctest.databinding.NewsListItemBinding
 import com.radhecodes.cbctest.repository.model.News
 
-class NewsListAdapter() :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<News>() {
-
-        override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
-            return oldItem.getNewsId() == newItem.getNewsId()
-        }
-
-        override fun areContentsTheSame(
-            oldItem: News,
-            newItem: News
-        ): Boolean {
-            return oldItem == newItem
-        }
-
-    }
-    private val differ = AsyncListDiffer(this, DIFF_CALLBACK)
-
+class NewsListAdapter : ListAdapter<News, RecyclerView.ViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = NewsListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -39,30 +21,42 @@ class NewsListAdapter() :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is NewsViewHolder -> {
-                holder.bind(differ.currentList[position])
+                holder.bind(getItem(position))
             }
         }
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return currentList.size
     }
 
-    fun submitList(list: List<News>?) {
-        differ.submitList(list)
-    }
-
-    inner class NewsViewHolder(val binding: NewsListItemBinding) :
+    inner class NewsViewHolder(private val binding: NewsListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: News) = with(itemView) {
 
-            binding.newsTitle.text = item.getTitle()
-            binding.newPublishDate.text = item.getPublishedTime()
+            binding.newsTitle.text = item.title
+            binding.newPublishDate.text = item.publishedTime
 
             Glide.with(itemView.context)
-                .load(item.getImageUrl())
+                .load(item.imageUrl)
                 .into(binding.newsThumbnail)
         }
     }
+}
+
+
+ class NewsDiffCallback : DiffUtil.ItemCallback<News>() {
+
+    override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
+        return oldItem.newsId == newItem.newsId
+    }
+
+    override fun areContentsTheSame(
+            oldItem: News,
+            newItem: News
+    ): Boolean {
+        return oldItem == newItem
+    }
+
 }

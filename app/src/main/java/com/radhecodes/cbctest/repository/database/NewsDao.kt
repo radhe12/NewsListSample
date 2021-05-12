@@ -1,8 +1,8 @@
 package com.radhecodes.cbctest.repository.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.radhecodes.cbctest.repository.model.News
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NewsDao {
@@ -14,7 +14,7 @@ interface NewsDao {
     }
 
     @Query("SELECT * FROM News")
-    fun getAllNews(): LiveData<List<News>>
+    fun getAllNews(): Flow<List<News>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNewsList(newsList: List<News>)

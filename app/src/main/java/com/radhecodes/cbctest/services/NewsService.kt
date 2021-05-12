@@ -1,6 +1,6 @@
 package com.radhecodes.cbctest.services
 
-import com.radhecodes.cbctest.repository.model.ApiResponse
+import com.radhecodes.cbctest.repository.model.NewsItem
 import retrofit2.Call
 import retrofit2.http.GET
 
@@ -10,5 +10,5 @@ interface NewsService {
     }
 
     @GET("items?lineupSlug=news")
-    fun getNews(): Call<ApiResponse>
+    suspend fun getNews(): List<NewsItem>
 }

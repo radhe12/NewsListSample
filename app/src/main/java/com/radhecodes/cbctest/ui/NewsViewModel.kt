@@ -1,24 +1,19 @@
 package com.radhecodes.cbctest.ui
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
 import com.radhecodes.cbctest.repository.NewsRepository
-import com.radhecodes.cbctest.repository.model.News
-import com.radhecodes.cbctest.repository.model.Status
-import kotlinx.coroutines.launch
 
-class NewsViewModel(private val newsRepository: NewsRepository): ViewModel() {
+class NewsViewModel(newsRepository: NewsRepository): ViewModel() {
+     val news = newsRepository.getNews().asLiveData()
 
-    fun getNewsFromApi(): LiveData<Status?> {
-        return newsRepository.getNews()
-    }
+     var selectedChip: MutableLiveData<Pair<String, Int>> = MutableLiveData()
 
-    fun getNewsFromLocalDb(): LiveData<List<News>> {
-        return newsRepository.getNewsFromDb()
-    }
+     var typeChips: MutableLiveData<List<String>> = MutableLiveData()
 
-    fun deleteAndInsertAllNews(newsList: List<News>) = viewModelScope.launch{
-        newsRepository.deleteAndInsertAllNews(newsList)
-    }
+     override fun onCleared() {
+          super.onCleared()
+     }
 }

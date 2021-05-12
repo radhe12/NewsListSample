@@ -2,12 +2,13 @@ package com.radhecodes.cbctest.di
 
 
 import androidx.room.Room
-import com.radhecodes.cbctest.repository.NewRepositoryImpl
 import com.radhecodes.cbctest.repository.NewsRepository
+import com.radhecodes.cbctest.repository.NewsRepositoryImpl
 import com.radhecodes.cbctest.repository.database.AppDatabase
 import com.radhecodes.cbctest.repository.database.NewsDao
 import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module.module
+import org.koin.dsl.module
+
 
 val myAppModule = module {
 
@@ -16,13 +17,13 @@ val myAppModule = module {
             .build()
     }
 
-    factory("newsDao") { get<AppDatabase>().newsDao }
-    factory("NewsRepository") {
+    factory { get<AppDatabase>().newsDao }
+    factory {
         createNewsRepository(
-            newsDao = get("newsDao")
+            newsDao = get()
         )
     }
 }
     fun createNewsRepository(newsDao: NewsDao): NewsRepository {
-        return NewRepositoryImpl(newsDao)
+        return NewsRepositoryImpl(newsDao)
     }
